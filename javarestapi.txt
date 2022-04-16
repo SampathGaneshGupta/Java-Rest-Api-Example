@@ -1,0 +1,79 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONObject;
+
+public class DataStore {
+
+	
+	private Map<String, String> Map = new HashMap<>();
+	
+	
+	private static DataStore instance = new DataStore();
+	public static DataStore getInstance(){
+		return instance;
+	}
+
+	
+	private DataStore(){
+		
+		Map.put("name", "myCentos"));
+		Map.put("id", "123");
+		Map.put("language", "Java");
+		Map.put("framework", "django");
+	}
+
+	public String get(String name) {
+		return Map.get(name);
+	}
+
+	public void put(String a,String b) {
+		Map.put(a, b);
+	}
+}
+
+
+
+
+public class MainServlet extends HttpServlet {
+
+	@Override
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		
+		String requestUrl = request.getRequestURI();
+		String name = requestUrl.substring("/people/".length());
+		
+		Person person = DataStore.getInstance().getPerson(name);
+		
+		if(person != null){
+			String json = "{\n";
+			json += "\"name\": " + JSONObject.quote(person.getName()) + ",\n";
+			json += "\"about\": " + JSONObject.quote(person.getAbout()) + ",\n";
+			json += "\"birthYear\": " + person.getBirthYear() + "\n";
+			json += "}";
+			response.getOutputStream().println(json);
+		}
+		else{
+			
+			response.getOutputStream().println("{}");
+		}
+	}
+	
+	
+
+	@Override
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+		String name = request.getParameter("name");
+		String about = request.getParameter("id");
+		int birthYear = Integer.parseInt(request.getParameter("birthYear"));
+		
+		DataStore.getInstance().get("name");
+	}
+}
